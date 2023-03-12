@@ -58,7 +58,7 @@ export const generateFacts = functions.https.onCall(
     }
 
     const prompt = "Tell me " + count + " short, interesting, and " +
-    "diversificated facts on " + topic;
+    "informative facts on " + topic;
 
     let completion;
     try {
