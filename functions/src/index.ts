@@ -48,7 +48,15 @@ export const generateFacts = functions.https.onCall(
   async (data, context) => {
     const topic = data.topic;
     const installationId = data.installationId;
+    const languageTag = data.languageTag;
     const count = data.count;
+    const temperature = data.temperature;
+
+    console.log("generating facts for topic=" + topic + " " +
+      "installationId=" + installationId + " " +
+      "languageTag=" + languageTag + " " +
+      "count=" + count + " " +
+      "temperature=" + temperature);
 
     if (context.auth == undefined) {
       return {
@@ -57,13 +65,25 @@ export const generateFacts = functions.https.onCall(
       };
     }
 
-    const prompt = "Tell me " + count + " short, interesting, and " +
-    "informative facts on " + topic;
+    let prompt;
+    switch (languageTag.substring(0, 2).toLowerCase()) {
+    case "pt":
+      prompt = "Pode por favor me contar " + count + " " +
+        "factos informativos, curtos e interessantess " +
+        "sobre " + topic + ". " +
+        "Por favor, alterne entre um pouco de humor e instrução.";
+      break;
+
+    default:
+      prompt = "Can you please tell me " + count +
+        "short, interesting, and " +
+        "informative facts on " + topic +
+        ". Please mix with a little bit of humor and teaching.";
+      break;
+    }
 
     let completion;
     try {
-      const temperature = data.temperature;
-
       completion = await openai.createCompletion({
         model: "text-davinci-003",
         prompt: prompt,
